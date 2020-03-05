@@ -304,9 +304,9 @@ public class IssueJsonParser implements JsonObjectParser<Issue> {
 
     private Collection<IssueField> parseFields(final JSONObject issueJson) throws JSONException {
         final JSONObject names = (providedNames != null) ? providedNames : issueJson.optJSONObject(NAMES_SECTION);
-        final Map<String, String> namesMap = parseNames(names);
+        final Map<String, String> namesMap = names == null ? Collections.emptyMap() : parseNames(names);
         final JSONObject schema = (providedSchema != null) ? providedSchema : issueJson.optJSONObject(SCHEMA_SECTION);
-        final Map<String, String> typesMap = parseSchema(schema);
+        final Map<String, String> typesMap = schema == null ? Collections.emptyMap() : parseSchema(schema);
 
         final JSONObject json = issueJson.getJSONObject(FIELDS);
         final ArrayList<IssueField> res = new ArrayList<IssueField>(json.length());

@@ -35,7 +35,12 @@ public class SearchResultJsonParser implements JsonObjectParser<SearchResult> {
 
         final Iterable<Issue> issues;
         if (issuesJsonArray.length() > 0) {
-            final IssueJsonParser issueParser = new IssueJsonParser(json.getJSONObject("names"), json.getJSONObject("schema"));
+            // In v 1.2-m01, these two fields were optional, but in version 5.2.2 they are marked as non-optional.
+            // I have a JIRA which I think is a "cloud" jira v "1001.0.0-SNAPSHOT" which is not returning these fields
+            // The IssueJsonParser accepts null args for these two
+            final JSONObject names = JsonParseUtil.getOptionalJsonObject(json, "names");
+            final JSONObject schema = JsonParseUtil.getOptionalJsonObject(json, "schema");
+            final IssueJsonParser issueParser = new IssueJsonParser(names, schema);
             final GenericJsonArrayParser<Issue> issuesParser = GenericJsonArrayParser.create(issueParser);
             issues = issuesParser.parse(issuesJsonArray);
         } else {
