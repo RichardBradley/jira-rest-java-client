@@ -226,4 +226,30 @@
             </build>
         </profile>
     </profiles>
+
+    <repositories>
+        <repository>
+            <id>atlassian-public</id>
+            <url>https://maven.atlassian.com/content/repositories/atlassian-public</url>
+        </repository>
+        <repository>
+            <id>spring-plugins</id>
+            <url>https://repo.spring.io/plugins-release/</url>
+        </repository>
+        <repository>
+            <id>atlassian-3d</id>
+            <url>https://maven.atlassian.com/3rdparty/</url>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>atlassian-public</id>
+            <url>https://maven.atlassian.com/content/repositories/atlassian-public</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>spring-plugins</id>
+            <url>https://repo.spring.io/plugins-release/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
 </project>
