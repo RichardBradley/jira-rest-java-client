@@ -285,6 +285,18 @@ public interface IssueRestClient {
     Promise<Void> addComment(URI commentsUri, Comment comment);
 
     /**
+     * Updates an existing comment
+     *
+     * See https://developer.atlassian.com/cloud/jira/platform/rest/v2/#api-rest-api-2-issue-issueIdOrKey-comment-id-put
+     */
+    Promise<Void> updateComment(Comment comment);
+
+    /**
+     * See https://developer.atlassian.com/cloud/jira/platform/rest/v2/#api-rest-api-2-issue-issueIdOrKey-comment-id-delete
+     */
+    Promise<Void> deleteComment(Comment comment);
+
+    /**
      * Retrieves the content of given attachment.
      *
      * @param attachmentUri URI for the attachment to retrieve

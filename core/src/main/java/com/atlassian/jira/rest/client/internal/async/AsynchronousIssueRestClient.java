@@ -63,6 +63,7 @@ import com.atlassian.jira.rest.client.internal.json.gen.IssuesInputJsonGenerator
 import com.atlassian.jira.rest.client.internal.json.gen.LinkIssuesInputGenerator;
 import com.atlassian.jira.rest.client.internal.json.gen.WorklogInputJsonGenerator;
 import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import io.atlassian.util.concurrent.Promise;
@@ -396,6 +397,18 @@ public class AsynchronousIssueRestClient extends AbstractAsynchronousRestClient 
     @Override
     public Promise<Void> addComment(final URI commentsUri, final Comment comment) {
         return post(commentsUri, comment, new CommentJsonGenerator(getVersionInfo()));
+    }
+
+    @Override
+    public Promise<Void> updateComment(Comment comment) {
+        Preconditions.checkNotNull(comment.getSelf());
+        return put(comment.getSelf(), comment, new CommentJsonGenerator(getVersionInfo()));
+    }
+
+    @Override
+    public Promise<Void> deleteComment(Comment comment) {
+        Preconditions.checkNotNull(comment.getSelf());
+        return delete(comment.getSelf());
     }
 
     @Override
