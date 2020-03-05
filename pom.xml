@@ -11,7 +11,7 @@
 
     <groupId>com.atlassian.jira</groupId>
     <artifactId>jira-rest-java-client-parent</artifactId>
-    <version>5.2.2-SNAPSHOT</version>
+    <version>5.2.2-rtb</version>
     <packaging>pom</packaging>
 
     <name>JIRA REST Java Client</name>
