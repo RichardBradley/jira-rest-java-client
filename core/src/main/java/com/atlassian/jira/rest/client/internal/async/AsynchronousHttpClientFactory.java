@@ -62,9 +62,12 @@ public class AsynchronousHttpClientFactory {
                     }
                 });
 
-        final HttpClient httpClient = defaultHttpClientFactory.create(options);
+        final HttpClient httpClient = defaultHttpClientFactory
+                .create(options);
 
-        return new AtlassianHttpClientDecorator(httpClient, authenticationHandler) {
+        HttpClient httpClientWithRetry = new HttpClientWithRetryAfter(httpClient);
+
+        return new AtlassianHttpClientDecorator(httpClientWithRetry, authenticationHandler) {
             @Override
             public void destroy() throws Exception {
                 defaultHttpClientFactory.dispose(httpClient);
