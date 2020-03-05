@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.net.URI;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
 /**
@@ -20,6 +21,7 @@ import java.util.regex.Pattern;
  * and https://github.com/AsyncHttpClient/async-http-client/issues/1007
  */
 public class HttpClientWithRetryAfter implements HttpClient {
+    private static final int MAX_RETRY_COUNT = 3;
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final HttpClient inner;
 
@@ -64,14 +66,17 @@ public class HttpClientWithRetryAfter implements HttpClient {
 
     @Override
     public ResponsePromise execute(Request request) {
+        AtomicInteger attemptCount = new AtomicInteger();
+
         return ResponsePromises.toResponsePromise(inner.execute(request).flatMap(response -> {
-            if (response.getStatusCode() == 429) {
+            if (response.getStatusCode() == 429 && attemptCount.incrementAndGet() <= MAX_RETRY_COUNT) {
                 int waitSeconds = ImmutableList.of("Retry-After", "Retry-after", "retry-after").stream()
                         .map(response::getHeader)
                         .filter(Objects::nonNull)
                         .map(Integer::parseInt)
+                        .map(i -> Math.max(10, Math.min(600, i)))
                         .findFirst()
-                        .orElse(5);
+                        .orElse(30 * attemptCount.get());
                 log.info("Saw `HTTP 429 Too Many Requests`, waiting for {} seconds", waitSeconds);
                 try {
                     Thread.sleep(1000 * waitSeconds);
