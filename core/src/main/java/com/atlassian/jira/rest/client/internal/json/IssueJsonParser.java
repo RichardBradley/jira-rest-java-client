@@ -222,9 +222,15 @@ public class IssueJsonParser implements JsonObjectParser<Issue> {
         final Collection<Attachment> attachments = parseOptionalArray(issueJson, new JsonWeakParserForJsonObject<Attachment>(attachmentJsonParser), FIELDS, ATTACHMENT_FIELD.id);
         final Collection<IssueField> fields = parseFields(issueJson);
 
-        final IssueType issueType = issueTypeJsonParser.parse(getFieldUnisex(issueJson, ISSUE_TYPE_FIELD.id));
-        final DateTime creationDate = JsonParseUtil.parseDateTime(getFieldStringUnisex(issueJson, CREATED_FIELD.id));
-        final DateTime updateDate = JsonParseUtil.parseDateTime(getFieldStringUnisex(issueJson, UPDATED_FIELD.id));
+        final IssueType issueType = jsonFields.has(ISSUE_TYPE_FIELD.id)
+                ? issueTypeJsonParser.parse(getFieldUnisex(issueJson, ISSUE_TYPE_FIELD.id))
+                : null;
+        final DateTime creationDate = jsonFields.has(CREATED_FIELD.id)
+                ? JsonParseUtil.parseDateTime(getFieldStringUnisex(issueJson, CREATED_FIELD.id))
+                : null;
+        final DateTime updateDate = jsonFields.has(UPDATED_FIELD.id)
+                ? JsonParseUtil.parseDateTime(getFieldStringUnisex(issueJson, UPDATED_FIELD.id))
+                : null;
 
         final String dueDateString = getOptionalFieldStringUnisex(issueJson, DUE_DATE_FIELD.id);
         final DateTime dueDate = dueDateString == null ? null : JsonParseUtil.parseDateTimeOrDate(dueDateString);
@@ -234,14 +240,18 @@ public class IssueJsonParser implements JsonObjectParser<Issue> {
         final User assignee = getOptionalNestedField(issueJson, ASSIGNEE_FIELD.id, userJsonParser);
         final User reporter = getOptionalNestedField(issueJson, REPORTER_FIELD.id, userJsonParser);
 
-        final BasicProject project = projectJsonParser.parse(getFieldUnisex(issueJson, PROJECT_FIELD.id));
+        final BasicProject project = jsonFields.has(PROJECT_FIELD.id)
+                ? projectJsonParser.parse(getFieldUnisex(issueJson, PROJECT_FIELD.id))
+                : null;
         final Collection<IssueLink> issueLinks;
         issueLinks = parseOptionalArray(issueJson, new JsonWeakParserForJsonObject<IssueLink>(issueLinkJsonParserV5), FIELDS, LINKS_FIELD.id);
 
         Collection<Subtask> subtasks = parseOptionalArray(issueJson, new JsonWeakParserForJsonObject<Subtask>(subtaskJsonParser), FIELDS, SUBTASKS_FIELD.id);
 
         final BasicVotes votes = getOptionalNestedField(issueJson, VOTES_FIELD.id, votesJsonParser);
-        final Status status = statusJsonParser.parse(getFieldUnisex(issueJson, STATUS_FIELD.id));
+        final Status status = jsonFields.has(STATUS_FIELD.id)
+                ? statusJsonParser.parse(getFieldUnisex(issueJson, STATUS_FIELD.id))
+                : null;
 
         final Collection<Version> fixVersions = parseOptionalArray(issueJson, new JsonWeakParserForJsonObject<Version>(versionJsonParser), FIELDS, FIX_VERSIONS_FIELD.id);
         final Collection<Version> affectedVersions = parseOptionalArray(issueJson, new JsonWeakParserForJsonObject<Version>(versionJsonParser), FIELDS, AFFECTS_VERSIONS_FIELD.id);
