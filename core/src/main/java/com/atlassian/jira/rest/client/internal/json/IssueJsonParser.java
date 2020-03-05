@@ -216,7 +216,7 @@ public class IssueJsonParser implements JsonObjectParser<Issue> {
         final Collection<Comment> comments = (commentsJson == null) ? Collections.<Comment>emptyList()
                 : parseArray(commentsJson, new JsonWeakParserForJsonObject<Comment>(commentJsonParser), "comments");
 
-        final String summary = getFieldStringValue(issueJson, SUMMARY_FIELD.id);
+        final String summary = getOptionalFieldStringUnisex(issueJson, SUMMARY_FIELD.id);
         final String description = getOptionalFieldStringUnisex(issueJson, DESCRIPTION_FIELD.id);
 
         final Collection<Attachment> attachments = parseOptionalArray(issueJson, new JsonWeakParserForJsonObject<Attachment>(attachmentJsonParser), FIELDS, ATTACHMENT_FIELD.id);
