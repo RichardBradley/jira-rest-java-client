@@ -23,73 +23,39 @@ import com.google.common.base.Objects;
  * Represents search results - links to issues matching given filter (JQL query) with basic
  * information supporting the paging through the results.
  *
+ * https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-search/#api-rest-api-3-search-jql-get
+ *
  * @since v0.2
  */
 public class SearchResult {
-    private final int startIndex;
-    private final int maxResults;
-    private final int total;
     private final Iterable<Issue> issues;
+    private final boolean isLast;
+    private final String nextPageToken;
 
-    public SearchResult(int startIndex, int maxResults, int total, Iterable<Issue> issues) {
-        this.startIndex = startIndex;
-        this.maxResults = maxResults;
-        this.total = total;
+    public SearchResult(Iterable<Issue> issues, boolean isLast, String nextPageToken) {
         this.issues = issues;
-    }
-
-    /**
-     * @return 0-based start index of the returned issues (e.g. "3" means that 4th, 5th...maxResults issues matching given query
-     * have been returned.
-     */
-    public int getStartIndex() {
-        return startIndex;
-    }
-
-    /**
-     * @return maximum page size (the window to results).
-     */
-    public int getMaxResults() {
-        return maxResults;
-    }
-
-    /**
-     * @return total number of issues (regardless of current maxResults and startIndex) matching given criteria.
-     * Query JIRA another time with different startIndex to get subsequent issues
-     */
-    public int getTotal() {
-        return total;
+        this.isLast = isLast;
+        this.nextPageToken = nextPageToken;
     }
 
     public Iterable<Issue> getIssues() {
         return issues;
     }
 
+    public boolean isLast() {
+        return isLast;
+    }
+
+    public String getNextPageToken() {
+        return nextPageToken;
+    }
+
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this).
-                add("startIndex", startIndex).
-                add("maxResults", maxResults).
-                add("total", total).
-                add("issues", issues).
-                toString();
+        return "SearchResult{" +
+                "issues=" + issues +
+                ", isLast=" + isLast +
+                ", nextPageToken='" + nextPageToken + '\'' +
+                '}';
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof SearchResult) {
-            SearchResult that = (SearchResult) obj;
-            return Objects.equal(this.startIndex, that.startIndex)
-                    && Objects.equal(this.maxResults, that.maxResults)
-                    && Objects.equal(this.total, that.total)
-                    && Objects.equal(this.issues, that.issues);
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(startIndex, maxResults, total, issues);
-    }
-
 }

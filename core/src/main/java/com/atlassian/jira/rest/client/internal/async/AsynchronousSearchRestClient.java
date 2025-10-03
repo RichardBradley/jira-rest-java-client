@@ -61,7 +61,7 @@ public class AsynchronousSearchRestClient extends AbstractAsynchronousRestClient
     private static final String JQL_ATTRIBUTE = "jql";
     private static final String FILTER_FAVOURITE_PATH = "filter/favourite";
     private static final String FILTER_PATH_FORMAT = "filter/%s";
-    private static final String SEARCH_URI_PREFIX = "search";
+    private static final String JQL_SEARCH_URI_PREFIX = "search/jql";
     private static final String EXPAND_ATTRIBUTE = "expand";
     private static final String FIELDS_ATTRIBUTE = "fields";
 
@@ -69,14 +69,14 @@ public class AsynchronousSearchRestClient extends AbstractAsynchronousRestClient
     private final FilterJsonParser filterJsonParser = new FilterJsonParser();
     private final GenericJsonArrayParser<Filter> filtersParser = GenericJsonArrayParser.create(new FilterJsonParser());
 
-    private final URI searchUri;
+    private final URI jqlSearchUri;
     private final URI favouriteUri;
     private final URI baseUri;
 
     public AsynchronousSearchRestClient(final URI baseUri, final HttpClient asyncHttpClient) {
         super(asyncHttpClient);
         this.baseUri = baseUri;
-        this.searchUri = UriBuilder.fromUri(baseUri).path(SEARCH_URI_PREFIX).build();
+        this.jqlSearchUri = UriBuilder.fromUri(baseUri).path(JQL_SEARCH_URI_PREFIX).build();
         this.favouriteUri = UriBuilder.fromUri(baseUri).path(FILTER_FAVOURITE_PATH).build();
     }
 
@@ -86,17 +86,19 @@ public class AsynchronousSearchRestClient extends AbstractAsynchronousRestClient
     }
 
     public Promise<SearchResult> searchJql(@Nullable String jql, @Nullable Integer maxResults, @Nullable Integer startAt, @Nullable Set<String> fields) {
+       // qq here
         final Iterable<String> expandosValues = Iterables.transform(ImmutableList.of(SCHEMA, NAMES), EXPANDO_TO_PARAM);
         final String notNullJql = StringUtils.defaultString(jql);
         if (notNullJql.length() > MAX_JQL_LENGTH_FOR_HTTP_GET) {
-            return searchJqlImplPost(maxResults, startAt, expandosValues, notNullJql, fields);
+            throw new RuntimeException("TODO: disabled in this branch, ask rtb");
+            // return searchJqlImplPost(maxResults, startAt, expandosValues, notNullJql, fields);
         } else {
             return searchJqlImplGet(maxResults, startAt, expandosValues, notNullJql, fields);
         }
     }
 
     private Promise<SearchResult> searchJqlImplGet(@Nullable Integer maxResults, @Nullable Integer startAt, Iterable<String> expandosValues, String jql, @Nullable Set<String> fields) {
-        final UriBuilder uriBuilder = UriBuilder.fromUri(searchUri)
+        final UriBuilder uriBuilder = UriBuilder.fromUri(jqlSearchUri)
                 .queryParam(JQL_ATTRIBUTE, jql)
                 .queryParam(EXPAND_ATTRIBUTE, Joiner.on(",").join(expandosValues));
 
@@ -130,7 +132,7 @@ public class AsynchronousSearchRestClient extends AbstractAsynchronousRestClient
         } catch (JSONException e) {
             throw new RestClientException(e);
         }
-        return postAndParse(searchUri, postEntity, searchResultJsonParser);
+        return postAndParse(jqlSearchUri, postEntity, searchResultJsonParser);
     }
 
     @Override

@@ -28,9 +28,11 @@ public class SearchResultJsonParser implements JsonObjectParser<SearchResult> {
 
     @Override
     public SearchResult parse(JSONObject json) throws JSONException {
-        final int startAt = json.getInt("startAt");
-        final int maxResults = json.getInt("maxResults");
-        final int total = json.getInt("total");
+        if (!json.has("isLast")) {
+            throw new JSONException("isLast is required");
+        }
+        boolean isLast = json.getBoolean("isLast");
+        String nextPageToken = json.optString("nextPageToken");
         final JSONArray issuesJsonArray = json.getJSONArray("issues");
 
         final Iterable<Issue> issues;
@@ -46,6 +48,6 @@ public class SearchResultJsonParser implements JsonObjectParser<SearchResult> {
         } else {
             issues = Collections.emptyList();
         }
-        return new SearchResult(startAt, maxResults, total, issues);
+        return new SearchResult(issues, isLast, nextPageToken);
     }
 }

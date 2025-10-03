@@ -1,3 +1,24 @@
+# Richard Bradley / Softwire notes:
+
+This is forked from Atlassian's very old and abandoned Java REST client for JIRA.
+That project is for non-cloud jira, but we have updated this to work a bit for cloud
+jira, at least for the parts we need.
+
+The recommended way to use JIRA API is via the OpenAPI spec, see
+https://community.atlassian.com/forums/Jira-articles/Generating-a-REST-client-for-Jira-Cloud/ba-p/1307133
+
+We're going to continue using this while it's easier to do so.
+
+## How to build and publish a new version:
+
+* make the necessary changes, bump the version number in all 5 poms, commit
+* run `mvn package`
+* run `cp app/target/jira-rest-java-client-app-5.2.2025-rtb-jar-with-dependencies.jar releases/`
+* commit that file and push it
+* update the referencing projects to use the new jar
+
+# Old readme
+
 Please see project documentation at https://ecosystem.atlassian.net/wiki/display/JRJC/.
 
 In order to start JIRA please execute atlas-debug from test directory.
